@@ -5,6 +5,7 @@ class XO
     private $stdin;
     private string $places;
     private string $currentPlayer = 'O';
+    private bool $gameInPlay = true;
 
     public function __construct()
     {
@@ -25,8 +26,20 @@ class XO
                 echo 'Goodbye...' . PHP_EOL;
                 return;
             }
-            if (in_array($keypress, ['1', '2', '3', '4', '5', '6', '7', '8', '9'])) {
+            if ($keypress === "\n") {
+                $this->clearScreen();
+                $this->resetGameBoard();
+                $this->drawGameBoard();
+                $this->gameInPlay = true;
+            }
+            if ($this->gameInPlay && in_array($keypress, ['1', '2', '3', '4', '5', '6', '7', '8', '9'])) {
                 $this->playMove($keypress);
+                if ($this->isGameOver()) {
+                    $this->gameInPlay = false;
+                    echo sprintf('GAME OVER: %s WINS!!', $this->currentPlayer);
+
+                }
+                $this->togglePlayer();
             }
         }
     }
@@ -48,7 +61,6 @@ class XO
             $this->places[$index] = $this->currentPlayer;
             $this->clearScreen();
             $this->drawGameBoard();
-            $this->togglePlayer();
         } else {
             $this->clearScreen();
             $this->drawGameBoard();
@@ -99,6 +111,32 @@ BOARD;
     private function togglePlayer()
     {
         $this->currentPlayer === 'O' ? $this->currentPlayer = 'X' : $this->currentPlayer = 'O';
+    }
+
+    private function isGameOver(): bool
+    {
+        $p = $this->currentPlayer;
+        if (
+            // Top line
+            ($this->places[0] === $p && $this->places[1] === $p && $this->places[2] === $p) ||
+            // Middle line
+            ($this->places[3] === $p && $this->places[4] === $p && $this->places[5] === $p) ||
+            // Bottom line
+            ($this->places[6] === $p && $this->places[7] === $p && $this->places[8] === $p) ||
+            // Left Column
+            ($this->places[0] === $p && $this->places[3] === $p && $this->places[6] === $p) ||
+            // Middle Column
+            ($this->places[1] === $p && $this->places[4] === $p && $this->places[7] === $p) ||
+            // Right Column
+            ($this->places[2] === $p && $this->places[5] === $p && $this->places[8] === $p) ||
+            // Top-Left to Bottom-Right
+            ($this->places[0] === $p && $this->places[4] === $p && $this->places[8] === $p) ||
+            // Bottom-Left to Top-Right
+            ($this->places[6] === $p && $this->places[4] === $p && $this->places[2] === $p)
+        ) {
+            return true;
+        }
+        return false;
     }
 }
 (new XO())->play();
