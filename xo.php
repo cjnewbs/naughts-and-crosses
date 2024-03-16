@@ -13,9 +13,15 @@ class XO
 
     public function play()
     {
+        $this->clearScreen();
         while (true) {
             $keypress = $this->readInput();
+            if ($keypress === "\e") {
+                echo 'Goodbye...' . PHP_EOL;
+                return;
+            }
             if ($keypress) {
+                $this->clearScreen();
                 echo 'Key pressed: ' . $this->translateInput($keypress) . PHP_EOL;
             }
         }
@@ -50,6 +56,11 @@ class XO
                 return "ESC";
         }
         return $string;
+    }
+
+    private function clearScreen()
+    {
+        echo chr(27) . chr(91) . 'H' . chr(27) . chr(91) . 'J';
     }
 }
 (new XO())->play();
