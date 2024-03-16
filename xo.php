@@ -56,15 +56,7 @@ class XO
 BOARD;
         echo sprintf(
             $board,
-            $this->places[0],
-            $this->places[1],
-            $this->places[2],
-            $this->places[3],
-            $this->places[4],
-            $this->places[5],
-            $this->places[6],
-            $this->places[7],
-            $this->places[8],
+            ...str_split($this->places)
         );
 
     }
@@ -76,35 +68,17 @@ BOARD;
 
     private function writeMove($keypress)
     {
-        switch ($keypress) {
-            case '7':
-                $index = 0;
-                break;
-            case '8':
-                $index = 1;
-                break;
-            case '9':
-                $index = 2;
-                break;
-            case '4':
-                $index = 3;
-                break;
-            case '5':
-                $index = 4;
-                break;
-            case '6':
-                $index = 5;
-                break;
-            case '1':
-                $index = 6;
-                break;
-            case '2':
-                $index = 7;
-                break;
-            case '3':
-                $index = 8;
-                break;
-        }
+        $index = match($keypress) {
+            '7' => 0,
+            '8' => 1,
+            '9' => 2,
+            '4' => 3,
+            '5' => 4,
+            '6' => 5,
+            '1' => 6,
+            '2' => 7,
+            '3' => 8,
+        };
         $this->resetGameBoard();
         $this->places[$index] = 'X';
     }
